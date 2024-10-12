@@ -8,80 +8,66 @@ To write a program to implement the the Logistic Regression Model to Predict the
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. Import the required packages and print the present data.
-2.Print the placement data and salary data.
-3.Find the null and duplicate values.
-4.Using logistic regression find the predicted values of accuracy , confusion matrices.
-5.Display the results. 
+```
+Get the data and use label encoder to change all the values to numeric.
+Drop the unwanted values,Check for NULL values, Duplicate values.
+Classify the training data and the test data. 
+Calculate the accuracy score, confusion matrix and classification report.
+```
 
 ## Program:
 
-#### Program to implement the the Logistic Regression Model to Predict the Placement Status of Student.
-#### Developed by: ALAGU NACHIYAR K
-#### RegisterNumber:  212222240006
+##### Program to implement the the Logistic Regression Model to Predict the Placement Status of Student.
+##### Developed by: ALAGU NACHIYAR K
+##### RegisterNumber:  212222240006
 
+```
 
-~~~python
-import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_california_housing
-from sklearn.linear_model import SGDRegressor
-from sklearn.multioutput import MultiOutputRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
-~~~
-~~~python
-data=fetch_california_housing()
-df=pd.DataFrame(data.data,columns=data.feature_names)
-df['target']=data.target
-print(df.head())
-~~~
-![Screenshot 2024-09-04 141320](https://github.com/user-attachments/assets/cf0a7cb3-f086-4f9c-8360-ffbcdf402808)
-~~~python
-df.info()
-~~~
-![Screenshot 2024-09-04 141326](https://github.com/user-attachments/assets/8acf2aaf-8108-4fe8-bc05-2d79d2ffe7f9)
-~~~python
-X=df.drop(columns=['AveOccup','target'])
-X.info()
-~~~
-![Screenshot 2024-09-04 141334](https://github.com/user-attachments/assets/a2305206-cfea-4d68-b0ae-576259660220)
-~~~python
-Y=df[['AveOccup','target']]
-Y.info()
-~~~
-![Screenshot 2024-09-04 141342](https://github.com/user-attachments/assets/226d87cd-cf5b-4137-bdaf-8ae683d9f936)
-~~~python
-X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+data = pd.read_csv('/content/Placement_Data.csv')
+data.head()
+data1 = data.copy()
+data1 = data1.drop(["sl_no","salary"],axis = 1)
+data1.head()
+data1.isnull().sum()
+data1.duplicated().sum()
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+data1['gender'] = le.fit_transform(data1['gender'])
+data1['ssc_b'] = le.fit_transform(data1['ssc_b'])
+data1['hsc_b'] = le.fit_transform(data1['hsc_b'])
+data1['hsc_s'] = le.fit_transform(data1['hsc_s'])
+data1['degree_t'] = le.fit_transform(data1['degree_t'])
+data1['workex'] = le.fit_transform(data1['workex'])
+data1['specialisation'] = le.fit_transform(data1['specialisation'])
+data1['status'] = le.fit_transform(data1['status'])
+data1.head()
+X = data1.iloc[:,:-1]
 X.head()
-~~~
-![Screenshot 2024-09-04 141402](https://github.com/user-attachments/assets/8c472cc7-88e2-434a-8932-cb2eaa258199)
-~~~python
-scaler_X=StandardScaler()
-scaler_Y=StandardScaler()
-X_train=scaler_X.fit_transform(X_train)
-X_test=scaler_X.transform(X_test)
-Y_train=scaler_Y.fit_transform(Y_train)
-Y_test=scaler_Y.transform(Y_test)
-print(X_train)
-~~~
-![Screenshot 2024-09-04 141409](https://github.com/user-attachments/assets/74067f93-ba6f-4a57-bb0e-aef7c777cf1d)
-~~~python
-sgd=SGDRegressor(max_iter=1000,tol=1e-3)
-multi_output_sgd=MultiOutputRegressor(sgd)
-multi_output_sgd.fit(X_train,Y_train)
-Y_pred=multi_output_sgd.predict(X_test)
-Y_pred = scaler_Y.inverse_transform(Y_pred)
-Y_test = scaler_Y.inverse_transform(Y_test)
-mse = mean_squared_error(Y_test, Y_pred)
-print("Mean Squared Error:", mse)
-print("\nPredictions:\n", Y_pred[:5])
-~~~
+y = data1["status"]
+y.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.2, random_state = 0)
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression(solver = "liblinear")
+lr.fit(X_train,y_train)
+y_pred = lr.predict(X_test)
+y_pred
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_test, y_pred)
+accuracy
+from sklearn.metrics import confusion_matrix
+confusion = (y_test, y_pred)
+confusion
+```
+
 
 ## Output:
-![Screenshot 2024-09-04 141416](https://github.com/user-attachments/assets/00db5521-9379-4fc9-820d-e491fab3ac68)
-
+![image](https://github.com/user-attachments/assets/8d539355-17f5-4585-b341-c6ec13e35fe7)
+![image](https://github.com/user-attachments/assets/fb629818-288c-4c7e-8e43-f868d64d5e20)
+![image](https://github.com/user-attachments/assets/21b90e58-3e9f-459c-86a3-265456ca34e3)
+![image](https://github.com/user-attachments/assets/a0e79d9d-fb22-4989-80f7-c3e1cffe2eb3)
+![image](https://github.com/user-attachments/assets/74b77b08-29f2-4844-ac16-427ccbaf5e22)
 
 
 ## Result:
